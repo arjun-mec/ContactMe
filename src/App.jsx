@@ -28,18 +28,18 @@ const App = () => {
   });
 
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     setOpen(true);
+    setCheckEmail(false)
 
     console.log(
       `First Name : ${formData.firstName} \nLast Name : ${formData.lastName} \nEmail : ${formData.email} \nPhone Number : ${formData.phoneNumber} \nMessage : ${formData.message}`
     );
 
-    setEmail(false)
     setFormData({
       firstName: "",
       lastName: "",
@@ -48,7 +48,8 @@ const App = () => {
       message: "",
     });
 
-    if (email) {
+    if (checkEmail) {
+      console.log(JSON.stringify(formData))
       try {
         const response = await fetch('/.netlify/functions/sendEmail', {
           method: 'POST',
@@ -96,6 +97,7 @@ return (
       message="Form submitted successfully"
       anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
     />
+
     <Grid
       container
       justifyContent="center"
@@ -230,7 +232,7 @@ return (
           />
           <FormControlLabel
             value="email_check"
-            control={<Checkbox checked={email} onChange={()=> {setEmail(!email)}} inputProps={{ 'aria-label': 'controlled' }}/>}
+            control={<Checkbox checked={checkEmail} onChange={()=> {setCheckEmail(!checkEmail)}} inputProps={{ 'aria-label': 'controlled' }}/>}
             label="Send response to your email ?"
             labelPlacement="end"
           />
