@@ -4,6 +4,8 @@ exports.handler = async (event, context) => {
   try {
     const { firstName, lastName, gender, phoneNumber, message, email } = JSON.parse(event.body);
 
+    global.location = { protocol: 'https:' }; 
+    
     emailjs.init({
       publicKey: process.env.EMAILJS_PUBLIC_KEY,
     });
