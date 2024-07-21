@@ -13,29 +13,60 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
-const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
+import SubmitButton from "./SubmitButton";
+
+const Form = ({
+  formData,
+  setFormData,
+  checkEmail,
+  setCheckEmail,
+  handleFormSubmit,
+}) => {
+  const [errors, setErrors] = useState({});
+
   const handleChange = (event) => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
     });
+
+    setErrors({ ...errors, [event.target.name]: false });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (formData.firstName.trim() === "") {
+      newErrors.firstName = true;
+    }
+    if (formData.email.trim() === "") {
+      newErrors.email = true;
+    }
+    if (formData.message.trim() === "") {
+      newErrors.message = true;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (validateForm()) {
+      handleFormSubmit(event);
+    }
   };
 
   return (
     <>
-      <Typography
-        variant="h3"
-        align="center"
-        sx={{ fontFamily: '"Montserrat", sans-serif', fontWeight: 600 }}
-      >
-        Contact Me
-      </Typography>
-
       <TextField
+        fullWidth
         required
         id="firstName"
         name="firstName"
         label="First name"
+        error={errors.firstName}
+        helperText={errors.firstName && "First name is required"}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -48,6 +79,7 @@ const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
       />
 
       <TextField
+        fullWidth
         id="lastName"
         name="lastName"
         label="Last name"
@@ -62,7 +94,7 @@ const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
         onChange={handleChange}
       />
 
-      <FormControl>
+      <FormControl fullWidth sx={{ alignItems: "center" }}>
         <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
 
         <RadioGroup
@@ -71,17 +103,20 @@ const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
           value={formData.gender}
           onChange={handleChange}
         >
-          <FormControlLabel value="Female" control={<Radio />} label="Female" />
           <FormControlLabel value="Male" control={<Radio />} label="Male" />
+          <FormControlLabel value="Female" control={<Radio />} label="Female" />
           <FormControlLabel value="Other" control={<Radio />} label="Other" />
         </RadioGroup>
       </FormControl>
 
       <TextField
+        fullWidth
         required
         id="email"
         name="email"
         label="Email"
+        error={errors.email}
+        helperText={errors.email && "Email is required"}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -94,7 +129,7 @@ const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
       />
 
       <TextField
-        required
+        fullWidth
         id="phoneNumber"
         name="phoneNumber"
         label="Phone number"
@@ -110,11 +145,15 @@ const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
       />
 
       <TextField
+        required
+        fullWidth
         id="message"
         name="message"
         label="Message"
         multiline
-        rows={4}
+        rows={3}
+        error={errors.message}
+        helperText={errors.message && "Message is required"}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -139,6 +178,8 @@ const Form = ({ formData, setFormData, checkEmail, setCheckEmail }) => {
         label="Send response to your email ?"
         labelPlacement="end"
       />
+
+      <SubmitButton handleSubmit={handleSubmit} />
     </>
   );
 };
